@@ -1,6 +1,8 @@
 #pragma once
 
 #include <raylib.h>
+#include <iostream>
+#include <string>
 
 // Component-wise plussing by a vector
 Vector2 operator+(const Vector2& left, const Vector2& right)
@@ -56,4 +58,11 @@ Vector2 operator/(const Vector2& vector, const float& scalar)
 		vector.x / scalar,
 		vector.y / scalar
 	};
+}
+
+// Printing a vector
+std::ostream& operator<<(std::ostream& stream, const Vector2& vector)
+{
+	stream << "<" << vector.x << ", " << vector.y << ">";
+	return stream;
 }
