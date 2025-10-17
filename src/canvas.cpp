@@ -9,6 +9,26 @@ Vector2 Canvas::Size;
 int Canvas::CurrentLayerIndex = -1;
 Camera2D Canvas::camera;
 
+void Canvas::DrawPixelGrid()
+{
+	const float lineThickness = 1.0f;
+	const Color color = (Color){88, 88, 88, 128};
+
+	// Draw vertical lines
+	for (int i = 0; i <= Size.x; i++)
+	{
+		float x = i * camera.zoom;
+		DrawLineEx({ x, 0 }, { x, Size.y * camera.zoom }, lineThickness, color);
+	}
+
+	// Draw horizontal lines
+	for (int i = 0; i <= Size.y; i++)
+	{
+		float y = i * camera.zoom;
+		DrawLineEx({ 0, y }, { Size.x * camera.zoom, y }, lineThickness, color);
+	}
+}
+
 void Canvas::Init(Vector2 size)
 {
 	// Set the dimensions of the layers
@@ -96,4 +116,6 @@ void Canvas::Draw()
 		actualPixelSize.y,
 		BLACK
 	);
+
+	DrawPixelGrid();
 }
