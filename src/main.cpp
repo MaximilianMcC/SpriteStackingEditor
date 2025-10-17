@@ -1,49 +1,23 @@
 #include <raylib.h>
-#include <cmath>
+#include "canvas.h"
 
 int main()
 {
+	SetTraceLogLevel(LOG_WARNING);
 	InitWindow(480, 480, "z is for new zealand");
 
-	// Load the texture
-	Texture texture = LoadTexture("./assets/milky.png");
-	const float textureSize = 16.0f;
-	int layers = texture.width / textureSize;
-	float layerDistance = 6.0f;
-
-	Vector2 position = { 480 * 0.5f, 480 * 0.5f };
-	float rotation = 0.0f;
-	float drawScale = 8;
+	Canvas::Init({ 16, 16 });
 
 	while (!WindowShouldClose())
 	{
+		Canvas::Update();
+
 		BeginDrawing();
 		ClearBackground(MAGENTA);
-
-		if (IsKeyPressed(KeyboardKey::KEY_UP)) layerDistance++;
-		if (IsKeyPressed(KeyboardKey::KEY_DOWN)) layerDistance--;
-		
-		if (IsKeyDown(KeyboardKey::KEY_LEFT)) rotation += 100 * GetFrameTime();
-		if (IsKeyDown(KeyboardKey::KEY_RIGHT)) rotation -= 100 * GetFrameTime();
-
-		// Loop over each layer and draw it
-		for (int i = 0; i < layers; i++)
-		{
-			DrawTexturePro(
-				texture,
-				{ textureSize * i, 0, textureSize, textureSize },
-				{ position.x, position.y - (layerDistance * i), textureSize * drawScale, textureSize * drawScale },
-				{ (textureSize * drawScale) / 2, (textureSize * drawScale) / 2 },
-				rotation,
-				WHITE
-			);
-		}
-
-
+		Canvas::Draw();
 		EndDrawing();
 	}
 
 	CloseWindow();
-
 	return 0;
 }
