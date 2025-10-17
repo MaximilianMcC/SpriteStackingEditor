@@ -1,5 +1,6 @@
 #include "canvas.h"
 
+#include <iostream>
 #include "numericalVectors.hpp"
 
 RenderTexture2D* Canvas::CurrentLayer = nullptr;
@@ -13,11 +14,9 @@ void Canvas::Init(Vector2 size)
 	// Set the dimensions of the layers
 	Size = size;
 
-	// Make the camera so we can zoom and whatnot
-	camera.target = size / 2;
-	camera.offset = { 0.0f, 0.0f };
-	camera.rotation = 0.0f;
-	camera.zoom = 20.0f;
+	// Set the cameras default zoom
+	camera.zoom = 25.0f;
+	HideCursor();
 
 	// Make an intial base layer
 	CreateEmptyLayer();
@@ -50,12 +49,10 @@ void Canvas::Update()
 
 	// Check for if we're clicking on the texture
 	Vector2 canvasPosition = GetScreenToWorld2D(GetMousePosition(), camera);
-	if (CheckCollisionPointRec(canvasPosition, { 0, 0, Size.x, Size.y }) == false) return;
 
 	// Draw a pixel where we clicked
-	const Color color = BLACK;
 	BeginTextureMode(LayerTextures[CurrentLayerIndex]);
-	DrawPixelV(canvasPosition, color);
+	DrawPixelV(canvasPosition, BLACK);
 	EndTextureMode();
 }
 
@@ -67,11 +64,36 @@ void Canvas::Draw()
 	if (CurrentLayerIndex - 1 > 0)
 	{
 		const Color halfOpacity = (Color){ 255u, 255u, 255u, 128u };
-		DrawTexture(LayerTextures[CurrentLayerIndex - 1].texture, 0, 0, halfOpacity);
+		Texture2D& texture = LayerTextures[CurrentLayerIndex].texture;
+		DrawTexturePro(texture,
+			{ 0, 0, (float)texture.width, -(float)texture.height },
+			{ 0, 0, (float)texture.width, (float)texture.height },
+			{ 0, 0 },
+			0.0f,
+			halfOpacity
+		);
 	}
 
 	// Draw the current layer
-	DrawTexture(LayerTextures[CurrentLayerIndex].texture, 0, 0, WHITE);
+	Texture2D& texture = LayerTextures[CurrentLayerIndex].texture;
+	DrawTexturePro(texture,
+		{ 0, 0, (float)texture.width, -(float)texture.height },
+		{ 0, 0, (float)texture.width, (float)texture.height },
+		{ 0, 0 },
+		0.0f,
+		WHITE
+	);
 
 	EndMode2D();
+
+	// Draw a cursor thing over the users mouse
+	// TODO: Snap to the pixels
+	Vector2 actualPixelSize = { camera.zoom, camera.zoom };
+	DrawRectangleLines(
+		GetMousePosition().x,
+		GetMousePosition().y,
+		actualPixelSize.x,
+		actualPixelSize.y,
+		BLACK
+	);
 }
