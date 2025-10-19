@@ -20,7 +20,7 @@ public:
 
 	static void Init(Vector2 size);
 	static void CreateEmptyLayer();
-	static void DuplicatePreviousLayer();
+	static void DuplicateCurrentLayer();
 
 	static void Update();	
 	static void Render();

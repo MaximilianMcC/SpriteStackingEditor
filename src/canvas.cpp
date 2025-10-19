@@ -88,8 +88,8 @@ void Canvas::ManageLayers()
 		// If we press ctrl+n make a new layer
 		if (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)) CreateEmptyLayer();
 	
-		// If we press ctrl+d duplicate the previous layer
-		if (IsKeyPressed(KEY_D) || IsKeyPressedRepeat(KEY_D)) DuplicatePreviousLayer();
+		// If we press ctrl+d duplicate the current layer
+		if (IsKeyPressed(KEY_D) || IsKeyPressedRepeat(KEY_D)) DuplicateCurrentLayer();
 	}
 }
 
@@ -116,9 +116,23 @@ void Canvas::CreateEmptyLayer()
 	CurrentLayerIndex++;
 }
 
-void Canvas::DuplicatePreviousLayer()
+void Canvas::DuplicateCurrentLayer()
 {
-	
+	// Make a new empty layer
+	CreateEmptyLayer();
+
+	// Paste the previous layers contents onto
+	// the new empty layer that we just made
+	BeginTextureMode(LayerTextures[CurrentLayerIndex]);
+	Texture2D& texture = LayerTextures[CurrentLayerIndex - 1].texture;
+	DrawTexturePro(texture,
+		{ 0, 0, (float)texture.width, -(float)texture.height },
+		{ 0, 0, (float)texture.width, (float)texture.height },
+		{ 0, 0 },
+		0.0f,
+		WHITE
+	);
+	EndTextureMode();
 }
 
 void Canvas::Update()
