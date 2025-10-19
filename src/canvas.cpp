@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include "numericalVectors.hpp"
+#include "colors.hpp"
 
 RenderTexture2D* Canvas::CurrentLayer = nullptr;
 std::vector<RenderTexture2D> Canvas::LayerTextures;
@@ -33,7 +34,7 @@ void Canvas::RenderLayerHierarchy()
 {
 	// Draw the background thing
 	float sectionSize = GetScreenWidth() / 8; 
-	DrawRectangle(0, 0, sectionSize, GetScreenHeight(), DARKGRAY);
+	DrawRectangle(0, 0, sectionSize, GetScreenHeight(), Colors::Panel);
 	
 	const float padding = sectionSize / 10.0f;
 	const float layerSize = sectionSize - (padding * 2);
@@ -41,6 +42,7 @@ void Canvas::RenderLayerHierarchy()
 	// Starting at the bottom, draw a preview of all layers
 	for (int i = 0; i < LayerTextures.size(); i++)
 	{
+		// Calculate the Y height for the current layer
 		float y = GetScreenHeight() - ((layerSize + padding) * i) - (layerSize + padding);
 
 		// Add a little background color thing so we
@@ -50,7 +52,7 @@ void Canvas::RenderLayerHierarchy()
 			y,
 			layerSize,
 			layerSize,
-			BLACK
+			Colors::PanelAlt
 		);
 
 		// Draw the layer preview thing

@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include "canvas.h"
+#include "colors.hpp"
 
 int main()
 {
@@ -14,7 +15,7 @@ int main()
 		Canvas::Update();
 
 		BeginDrawing();
-		ClearBackground(MAGENTA);
+		ClearBackground(Colors::WorkspaceBackground);
 		Canvas::Render();
 		EndDrawing();
 	}
