@@ -114,11 +114,6 @@ void Canvas::CreateEmptyLayer()
 
 	// Select the layer
 	CurrentLayerIndex++;
-
-	//! debug give it a background color
-	BeginTextureMode(LayerTextures[CurrentLayerIndex]);
-	ClearBackground(WHITE);
-	EndTextureMode();
 }
 
 void Canvas::DuplicatePreviousLayer()
@@ -137,10 +132,10 @@ void Canvas::Render()
 	BeginMode2D(camera);
 
 	// Draw the behind layer at 50% opacity
-	if (CurrentLayerIndex - 1 > 0)
+	if (CurrentLayerIndex > 0)
 	{
 		const Color halfOpacity = (Color){ 255u, 255u, 255u, 128u };
-		Texture2D& texture = LayerTextures[CurrentLayerIndex].texture;
+		Texture2D& texture = LayerTextures[CurrentLayerIndex - 1].texture;
 		DrawTexturePro(texture,
 			{ 0, 0, (float)texture.width, -(float)texture.height },
 			{ 0, 0, (float)texture.width, (float)texture.height },
