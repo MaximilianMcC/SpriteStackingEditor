@@ -4,6 +4,7 @@
 int main()
 {
 	SetTraceLogLevel(LOG_WARNING);
+	SetConfigFlags(ConfigFlags::FLAG_WINDOW_RESIZABLE);
 	InitWindow(480, 480, "z is for new zealand");
 
 	Canvas::Init({ 16, 16 });
@@ -14,7 +15,7 @@ int main()
 
 		BeginDrawing();
 		ClearBackground(MAGENTA);
-		Canvas::Draw();
+		Canvas::Render();
 		EndDrawing();
 	}
 

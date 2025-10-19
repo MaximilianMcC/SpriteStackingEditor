@@ -7,7 +7,10 @@ class Canvas
 {
 private:
 	static Camera2D camera;
-	static void DrawPixelGrid();
+	static void RenderPixelGrid();
+	static void RenderLayerHierarchy();
+	static void DrawOnCanvas();
+	static void ManageLayers();
 
 public:
 	static RenderTexture2D* CurrentLayer;
@@ -19,6 +22,6 @@ public:
 	static void CreateEmptyLayer();
 	static void DuplicatePreviousLayer();
 
-	static void Update();
-	static void Draw();
+	static void Update();	
+	static void Render();
 };

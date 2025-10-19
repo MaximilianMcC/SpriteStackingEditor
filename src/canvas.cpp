@@ -9,7 +9,7 @@ Vector2 Canvas::Size;
 int Canvas::CurrentLayerIndex = -1;
 Camera2D Canvas::camera;
 
-void Canvas::DrawPixelGrid()
+void Canvas::RenderPixelGrid()
 {
 	const float lineThickness = 1.0f;
 	const Color color = (Color){88, 88, 88, 128};
@@ -26,6 +26,70 @@ void Canvas::DrawPixelGrid()
 	{
 		float y = i * camera.zoom;
 		DrawLineEx({ 0, y }, { Size.x * camera.zoom, y }, lineThickness, color);
+	}
+}
+
+void Canvas::RenderLayerHierarchy()
+{
+	// Draw the background thing
+	float sectionSize = GetScreenWidth() / 8; 
+	DrawRectangle(0, 0, sectionSize, GetScreenHeight(), DARKGRAY);
+	
+	const float padding = sectionSize / 10.0f;
+	const float layerSize = sectionSize - (padding * 2);
+
+	// Starting at the bottom, draw a preview of all layers
+	for (int i = 0; i < LayerTextures.size(); i++)
+	{
+		float y = GetScreenHeight() - ((layerSize + padding) * i) - (layerSize + padding);
+
+		// Add a little background color thing so we
+		// can see stuff with a transparent background
+		DrawRectangle(
+			padding,
+			y,
+			layerSize,
+			layerSize,
+			BLACK
+		);
+
+		// Draw the layer preview thing
+		Texture2D& texture = LayerTextures[i].texture;
+		DrawTexturePro(texture,
+			{ 0, 0, (float)texture.width, -(float)texture.height },
+			{ padding, y, layerSize, layerSize },
+			{ 0, 0 },
+			0.0f,
+			WHITE
+		);
+	}
+}
+
+void Canvas::DrawOnCanvas()
+{
+	// Check for if the user is clicking
+	if (IsMouseButtonDown(MouseButton::MOUSE_BUTTON_LEFT) == false) return;
+
+	// Check for if we're clicking on the texture
+	Vector2 canvasPosition = GetScreenToWorld2D(GetMousePosition(), camera);
+	if (CheckCollisionPointRec(canvasPosition, { 0, 0, Size.x, Size.y}) == false) return;
+
+	// Draw a pixel where we clicked
+	BeginTextureMode(LayerTextures[CurrentLayerIndex]);
+	DrawPixelV(canvasPosition, BLACK);
+	EndTextureMode();
+}
+
+void Canvas::ManageLayers()
+{
+	// Check for shortcuts
+	if (IsKeyDown(KEY_LEFT_CONTROL))
+	{
+		// If we press ctrl+n make a new layer
+		if (IsKeyPressed(KEY_N) || IsKeyPressedRepeat(KEY_N)) CreateEmptyLayer();
+	
+		// If we press ctrl+d duplicate the previous layer
+		if (IsKeyPressed(KEY_D) || IsKeyPressedRepeat(KEY_D)) DuplicatePreviousLayer();
 	}
 }
 
@@ -64,19 +128,11 @@ void Canvas::DuplicatePreviousLayer()
 
 void Canvas::Update()
 {
-	// Check for if the user is clicking
-	if (IsMouseButtonDown(MouseButton::MOUSE_BUTTON_LEFT) == false) return;
-
-	// Check for if we're clicking on the texture
-	Vector2 canvasPosition = GetScreenToWorld2D(GetMousePosition(), camera);
-
-	// Draw a pixel where we clicked
-	BeginTextureMode(LayerTextures[CurrentLayerIndex]);
-	DrawPixelV(canvasPosition, BLACK);
-	EndTextureMode();
+	ManageLayers();
+	DrawOnCanvas();
 }
 
-void Canvas::Draw()
+void Canvas::Render()
 {
 	BeginMode2D(camera);
 
@@ -117,5 +173,6 @@ void Canvas::Draw()
 		BLACK
 	);
 
-	DrawPixelGrid();
+	RenderPixelGrid();
+	RenderLayerHierarchy();
 }
