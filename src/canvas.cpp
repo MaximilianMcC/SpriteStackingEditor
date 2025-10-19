@@ -19,14 +19,24 @@ void Canvas::RenderPixelGrid()
 	for (int i = 0; i <= Size.x; i++)
 	{
 		float x = i * camera.zoom;
-		DrawLineEx({ x, 0 }, { x, Size.y * camera.zoom }, lineThickness, color);
+		DrawLineEx(
+			(Vector2){ x, 0 } + camera.offset,
+			(Vector2){ x, Size.y * camera.zoom } + camera.offset,
+			lineThickness,
+			color
+		);
 	}
 
 	// Draw horizontal lines
 	for (int i = 0; i <= Size.y; i++)
 	{
 		float y = i * camera.zoom;
-		DrawLineEx({ 0, y }, { Size.x * camera.zoom, y }, lineThickness, color);
+		DrawLineEx(
+			(Vector2){ 0, y } + camera.offset,
+			(Vector2){ Size.x * camera.zoom, y } + camera.offset,
+			lineThickness,
+			color
+		);
 	}
 }
 
@@ -38,6 +48,12 @@ void Canvas::RenderLayerHierarchy()
 	
 	const float padding = sectionSize / 10.0f;
 	const float layerSize = sectionSize - (padding * 2);
+
+	// Move the camera next to the panel thing
+	// TODO: Do NOT do this here
+	//! bad
+	camera.offset.x = sectionSize + padding;
+	camera.offset.y = padding;
 
 	// Starting at the bottom, draw a preview of all layers
 	for (int i = 0; i < LayerTextures.size(); i++)

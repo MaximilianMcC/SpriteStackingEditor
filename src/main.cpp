@@ -6,7 +6,7 @@ int main()
 {
 	SetTraceLogLevel(LOG_WARNING);
 	SetConfigFlags(ConfigFlags::FLAG_WINDOW_RESIZABLE);
-	InitWindow(480, 480, "z is for new zealand");
+	InitWindow(1080, 720, "thermonuclear pie");
 
 	Canvas::Init({ 16, 16 });
 
